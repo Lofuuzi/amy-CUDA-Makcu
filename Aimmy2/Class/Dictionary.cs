@@ -16,7 +16,7 @@ namespace Aimmy2.Class
             { "Dynamic FOV Keybind", ""},
             { "Emergency Stop Keybind", ""},
             { "Model Switch Keybind", ""},
-            { "Anti Recoil Keybind", "Left"},
+            { "Anti Recoil Keybind", ""},
             { "Disable Anti Recoil Keybind", ""},
             { "Gun 1 Key", ""},
             { "Gun 2 Key", ""},
