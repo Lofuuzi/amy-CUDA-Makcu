@@ -1,6 +1,7 @@
 using Aimmy2.Class;
 using Aimmy2.MouseMovementLibraries.GHubSupport;
 using Class;
+using MouseMovementLibraries.MakcuSupport;
 using MouseMovementLibraries.ddxoftSupport;
 using MouseMovementLibraries.RazerSupport;
 using MouseMovementLibraries.SendInputSupport;
@@ -26,10 +27,60 @@ namespace InputLogic
         public static double smoothingFactor = 0.5;
         public static bool IsEMASmoothingEnabled = false;
 
+        public static Action<int, int> MoveMouseAction = (x, y) => DefaultMove(x, y);
+        public static Action<int> PressMouseAction = (button) => DefaultPress(button);
+        public static Action<int> ReleaseMouseAction = (button) => DefaultRelease(button);
+
         [DllImport("user32.dll")]
         private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, int dwExtraInfo);
 
         private static Random MouseRandom = new();
+        
+        private static void DefaultMove(int x, int y)
+        {
+            switch (Dictionary.dropdownState["Mouse Movement Method"])
+            {
+                case "SendInput":
+                    SendInputMouse.SendMouseCommand(MOUSEEVENTF_MOVE, x, y);
+                    break;
+
+                case "LG HUB":
+                    LGMouse.Move(0, x, y, 0);
+                    break;
+
+                case "Razer Synapse (Require Razer Peripheral)":
+                    RZMouse.mouse_move(x, y, true);
+                    break;
+
+                case "Makcu Support":
+                    MakcuMain.MakcuInstance?.Move(x, y);
+                    break;
+
+                default:
+                    mouse_event(MOUSEEVENTF_MOVE, (uint)x, (uint)y, 0, 0);
+                    break;
+            }
+        }
+
+        private static void DefaultPress(int button)
+        {
+            switch (button)
+            {
+                case 0: MakcuMain.MakcuInstance?.Press(MakcuMouseButton.Left); break;
+                case 1: MakcuMain.MakcuInstance?.Press(MakcuMouseButton.Right); break;
+                case 2: MakcuMain.MakcuInstance?.Press(MakcuMouseButton.Middle); break;
+            }
+        }
+
+        private static void DefaultRelease(int button)
+        {
+            switch (button)
+            {
+                case 0: MakcuMain.MakcuInstance?.Release(MakcuMouseButton.Left); break;
+                case 1: MakcuMain.MakcuInstance?.Release(MakcuMouseButton.Right); break;
+                case 2: MakcuMain.MakcuInstance?.Release(MakcuMouseButton.Middle); break;
+            }
+        }
 
         private static double EmaSmoothing(double previousValue, double currentValue, double smoothingFactor) => (currentValue * smoothingFactor) + (previousValue * (1 - smoothingFactor));
 
@@ -57,6 +108,10 @@ namespace InputLogic
                 case "ddxoft Virtual Input Driver":
                     mouseDownAction = () => DdxoftMain.ddxoftInstance.btn!(1);
                     mouseUpAction = () => DdxoftMain.ddxoftInstance.btn(2);
+                    break;
+                case "Makcu Support":
+                    mouseDownAction = () => MakcuMain.MakcuInstance.Press(MakcuMouseButton.Left);
+                    mouseUpAction = () => MakcuMain.MakcuInstance.Release(MakcuMouseButton.Left);
                     break;
                 default:
                     mouseDownAction = () => mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
@@ -173,6 +228,10 @@ namespace InputLogic
                     DdxoftMain.ddxoftInstance.movR!(xRecoil, yRecoil);
                     break;
 
+                case "Makcu Support":
+                    MakcuMain.MakcuInstance.Move(xRecoil, yRecoil);
+                    break;
+
                 default:
                     mouse_event(MOUSEEVENTF_MOVE, (uint)xRecoil, (uint)yRecoil, 0, 0);
                     break;
@@ -229,8 +288,8 @@ namespace InputLogic
                 newPosition.Y = (int)EmaSmoothing(previousY, newPosition.Y, smoothingFactor);
             }
 
-            newPosition.X = Math.Clamp(newPosition.X, -150, 150);
-            newPosition.Y = Math.Clamp(newPosition.Y, -150, 150);
+            newPosition.X = Math.Clamp(newPosition.X, -200, 200);
+            newPosition.Y = Math.Clamp(newPosition.Y, -200, 200);
 
             newPosition.Y = (int)(newPosition.Y / aspectRatioCorrection);
 
@@ -253,6 +312,10 @@ namespace InputLogic
 
                 case "ddxoft Virtual Input Driver":
                     DdxoftMain.ddxoftInstance.movR!(newPosition.X, newPosition.Y);
+                    break;
+
+                case "Makcu Support":
+                    MakcuMain.MakcuInstance.Move(newPosition.X, newPosition.Y);
                     break;
 
                 default:
