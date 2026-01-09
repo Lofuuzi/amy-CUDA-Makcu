@@ -4,6 +4,7 @@ using Aimmy2.MouseMovementLibraries.GHubSupport;
 using Aimmy2.UILibrary;
 using MouseMovementLibraries.ddxoftSupport;
 using MouseMovementLibraries.RazerSupport;
+using MouseMovementLibraries.MakcuSupport;
 using Other;
 using System.Diagnostics;
 using System.Windows;
@@ -154,25 +155,43 @@ namespace Aimmy2.Controls
                     uiManager.DDI_LGHUB = _mainWindow.AddDropdownItem(d, "LG HUB");
                     uiManager.DDI_RazerSynapse = _mainWindow.AddDropdownItem(d, "Razer Synapse (Require Razer Peripheral)");
                     uiManager.DDI_ddxoft = _mainWindow.AddDropdownItem(d, "ddxoft Virtual Input Driver");
+                    uiManager.DDI_MAKCU = _mainWindow.AddDropdownItem(d, "Makcu Support");
+                    
 
                     // Setup handlers
                     uiManager.DDI_LGHUB.Selected += async (s, e) =>
                     {
+                        MakcuMain.Unload();
                         if (!new LGHubMain().Load())
                             await ResetToMouseEvent();
                     };
 
                     uiManager.DDI_RazerSynapse.Selected += async (s, e) =>
                     {
+                        MakcuMain.Unload();
                         if (!await RZMouse.Load())
                             await ResetToMouseEvent();
                     };
 
                     uiManager.DDI_ddxoft.Selected += async (s, e) =>
                     {
+                        MakcuMain.Unload();
                         if (!await DdxoftMain.Load())
                             await ResetToMouseEvent();
                     };
+
+                    uiManager.DDI_MAKCU.Selected += async (s, e) =>
+                    {
+                        if (!await MakcuMain.Load())
+                            bindingManager.SetupMakcuEvents();
+                    };
+
+                    uiManager.DDI_MAKCU.Unselected += (s, e) =>
+                    {
+                        MakcuMain.DisposeInstance();
+                        bindingManager.RestoreMouseEvents();
+                    };
+
                 })
                 .AddDropdown("Screen Capture Method", d =>
                 {
