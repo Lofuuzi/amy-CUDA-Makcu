@@ -128,9 +128,6 @@ namespace MouseMovementLibraries.MakcuSupport
 
             string state = isPressed ? "Presionado" : "Liberado";
             Debug.WriteLine($"{button} físico {state}!");
-
-
         }
-
-
     }
+}
