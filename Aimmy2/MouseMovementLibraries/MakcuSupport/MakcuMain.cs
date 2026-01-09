@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using Visuality;
 
-
 namespace MouseMovementLibraries.MakcuSupport
 {
     internal class MakcuMain
@@ -12,8 +11,8 @@ namespace MouseMovementLibraries.MakcuSupport
         public static MakcuMouse MakcuInstance { get; private set; }
 
         private static bool _isMakcuLoaded = false;
+        
         private static bool _isSubscribedToButtonEvents = false;
-
 
         private const bool DefaultDebugLoggingForInternalCreation = false;
         private const bool DefaultSendInitCommandsForInternalCreation = true;
@@ -41,7 +40,6 @@ namespace MouseMovementLibraries.MakcuSupport
             {
                 ConfigureMakcuInstance(DefaultDebugLoggingForInternalCreation, DefaultSendInitCommandsForInternalCreation);
             }
-
 
             try
             {
@@ -99,6 +97,7 @@ namespace MouseMovementLibraries.MakcuSupport
             Unload();
             MakcuInstance?.Dispose();
             MakcuInstance = null;
+            _isMakcuLoaded = false;
             Console.WriteLine("MakcuMain: MakcuMouse instance disposed (null).");
         }
 
@@ -122,10 +121,8 @@ namespace MouseMovementLibraries.MakcuSupport
             }
         }
 
-
         private static void OnMakcuButtonStateChanged(MakcuMouseButton button, bool isPressed)
         {
-
             string state = isPressed ? "Presionado" : "Liberado";
             Debug.WriteLine($"{button} físico {state}!");
         }
