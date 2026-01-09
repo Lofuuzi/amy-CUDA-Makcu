@@ -12,31 +12,31 @@ namespace Aimmy2.Class
         public static Dictionary<string, dynamic> bindingSettings = new()
         {
             { "Aim Keybind", "Right"},
-            { "Second Aim Keybind", "LMenu"},
-            { "Dynamic FOV Keybind", "Left"},
-            { "Emergency Stop Keybind", "Delete"},
-            { "Model Switch Keybind", "OemPipe"},
+            { "Second Aim Keybind", ""},
+            { "Dynamic FOV Keybind", ""},
+            { "Emergency Stop Keybind", ""},
+            { "Model Switch Keybind", ""},
             { "Anti Recoil Keybind", "Left"},
-            { "Disable Anti Recoil Keybind", "Oem6"},
-            { "Gun 1 Key", "D1"},
-            { "Gun 2 Key", "D2"},
+            { "Disable Anti Recoil Keybind", ""},
+            { "Gun 1 Key", ""},
+            { "Gun 2 Key", ""},
         };
 
         public static Dictionary<string, dynamic> sliderSettings = new()
         {
             { "Suggested Model", ""},
-            { "FOV Size", 640 },
+            { "FOV Size", 389 },
             { "Dynamic FOV Size", 200 },
-            { "Mouse Sensitivity (+/-)", 0.80 },
-            { "Mouse Jitter", 4 },
+            { "Mouse Sensitivity (+/-)", 0.94 },
+            { "Mouse Jitter", 0 },
             { "Sticky Aim Threshold", 50 },
-            { "Y Offset (Up/Down)", 0 },
+            { "Y Offset (Up/Down)", 146.0 },
             { "Y Offset (%)", 50 },
             { "X Offset (Left/Right)", 0 },
             { "X Offset (%)", 50 },
-            { "EMA Smoothening", 0.5},
+            { "EMA Smoothening", 1.0},
             { "Auto Trigger Delay", 0.1 },
-            { "AI Minimum Confidence", 45 },
+            { "AI Minimum Confidence", 50 },
             { "AI Confidence Font Size", 20 },
             { "Corner Radius", 0 },
             { "Border Thickness", 1 },
@@ -52,7 +52,7 @@ namespace Aimmy2.Class
             { "Constant AI Tracking", false },
             { "Predictions", false },
             { "EMA Smoothening", false },
-            { "Enable Model Switch Keybind", true },
+            { "Enable Model Switch Keybind", false },
             { "Enable Gun Switching Keybind", false },
             { "Auto Trigger", false },
             { "Anti Recoil", false },
@@ -64,7 +64,7 @@ namespace Aimmy2.Class
             { "Cursor Check", false },
             { "Spray Mode", false },
             //{ "Only When Held", false },
-            { "Show FOV", true },
+            { "Show FOV", false },
             { "Show AI Confidence", false },
             { "Show Tracers", false },
             { "Collect Data While Playing", false },
@@ -84,25 +84,25 @@ namespace Aimmy2.Class
         {
             { "Aim Assist", false },
             { "Aim Config", false },
-            { "Auto Trigger", false },
+            { "Auto Trigger", true },
             { "Anti Recoil", false},
-            { "Anti Recoil Config", false },
-            { "FOV Config", false },
-            { "ESP Config", false },
+            { "Anti Recoil Config", true },
+            { "FOV Config", true },
+            { "ESP Config", true },
             { "Settings Menu", false },
-            { "X/Y Percentage Adjustment", false },
-            { "Theme Settings", false },
-            { "Display Settings", false}
+            { "X/Y Percentage Adjustment", true },
+            { "Theme Settings", true },
+            { "Display Settings", true}
         };
 
         public static Dictionary<string, dynamic> dropdownState = new()
         {
             { "Prediction Method", "Kalman Filter" },
             { "Detection Area Type", "Closest to Center Screen" },
-            { "Aiming Boundaries Alignment", "Center" },
-            { "Mouse Movement Method", "Mouse Event" },
+            { "Aiming Boundaries Alignment", "Bottom" },
+            { "Mouse Movement Method", "MAKCU Support" },
             { "Screen Capture Method", "DirectX" },
-            { "Execution Provider", "CUDA" },
+            { "Execution Provider", "TensorRT" },
             { "Tracer Position", "Bottom" },
             { "Movement Path", "Cubic Bezier" },
             { "Image Size", "640" },
@@ -113,14 +113,14 @@ namespace Aimmy2.Class
         {
             { "FOV Color", "#FF8080FF"},
             { "Detected Player Color", "#FF00FFFF"},
-            { "Theme Color", "#FF722ED1" }
+            { "Theme Color", "#00BFFF" }
         };
 
         public static Dictionary<string, dynamic> AntiRecoilSettings = new()
         {
-            { "Hold Time", 10 },
-            { "Fire Rate", 200 },
-            { "Y Recoil (Up/Down)", 10 },
+            { "Hold Time", 1.0 },
+            { "Fire Rate", 1.0 },
+            { "Y Recoil (Up/Down)", 6 },
             { "X Recoil (Left/Right)", 0 }
         };
 
