@@ -83,9 +83,9 @@ namespace Aimmy2.Class
         public static Dictionary<string, dynamic> minimizeState = new()
         {
             { "Aim Assist", false },
-            { "Aim Config", false },
+            { "Aim Config", true },
             { "Auto Trigger", true },
-            { "Anti Recoil", false},
+            { "Anti Recoil", true},
             { "Anti Recoil Config", true },
             { "FOV Config", true },
             { "ESP Config", true },
@@ -120,7 +120,7 @@ namespace Aimmy2.Class
         {
             { "Hold Time", 1.0 },
             { "Fire Rate", 1.0 },
-            { "Y Recoil (Up/Down)", 6 },
+            { "Y Recoil (Up/Down)", 6.0 },
             { "X Recoil (Left/Right)", 0 }
         };
 
