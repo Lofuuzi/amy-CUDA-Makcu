@@ -11,7 +11,7 @@ namespace InputLogic
             int baseSense = 5;
             
             // 1. 判定是否觸發 % 機率，NextDouble() 會產生 0.0 ~ 1.0 之間的數
-            if (Random.Shared.NextDouble() < 0.55)
+            if (Random.Shared.NextDouble() < 0.51)
             {
                 return baseSense; // % 機率直接回傳baseSense
             }
@@ -41,7 +41,7 @@ namespace InputLogic
             }
 
             // anti-recoil
-            if (start.Y < end.Y + 6)
+            if (start.Y < end.Y + 7)
             {
                 y += ranNum();
             }
