@@ -1,5 +1,6 @@
 using Aimmy2.Class;
 using Aimmy2.Controls;
+using MouseMovementLibraries.MakcuSupport;
 using Aimmy2.MouseMovementLibraries.GHubSupport;
 using Aimmy2.Other;
 using Aimmy2.Theme;
@@ -923,7 +924,8 @@ namespace Aimmy2
                     ["SendInput"] = 1,
                     ["LG HUB"] = 2,
                     ["Razer Synapse (Require Razer Peripheral)"] = 3,
-                    ["ddxoft Virtual Input Driver"] = 4
+                    ["ddxoft Virtual Input Driver"] = 4,
+                    ["Makcu Support"] = 5
                 }),
                 (uiManager.D_ScreenCaptureMethod, "Screen Capture Method", new Dictionary<string, int>
                 {
@@ -1057,7 +1059,8 @@ namespace Aimmy2
                     ["SendInput"] = 1,
                     ["LG HUB"] = 2,
                     ["Razer Synapse (Require Razer Peripheral)"] = 3,
-                    ["ddxoft Virtual Input Driver"] = 4
+                    ["ddxoft Virtual Input Driver"] = 4,
+                    ["Makcu Support"] = 5
                 }),
 
                 ("Movement Path", uiManager.D_MovementPath, new Dictionary<string, int>
