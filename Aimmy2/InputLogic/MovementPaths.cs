@@ -5,10 +5,9 @@ namespace InputLogic
     class MovementPaths
     {
         private static readonly int[] permutation = new int[512];
-
+/*
          static int ranNum()
         {
-            /*
              int baseSense = 5;
             // 1. 判定是否觸發 % 機率，NextDouble() 會產生 0.0 ~ 1.0 之間的數
             if (Random.Shared.NextDouble() < 0.51)
@@ -20,7 +19,7 @@ namespace InputLogic
             
             return baseSense + offset;
         }
-        */
+*/
 
         internal static Point CubicBezier(Point start, Point end, Point control1, Point control2, double t)
         {
