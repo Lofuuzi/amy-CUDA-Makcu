@@ -8,7 +8,7 @@ namespace InputLogic
 
          static int ranNum()
         {
-             int baseSense = 0;
+             int baseSense = 1;
             // 1. 判定是否觸發 % 機率，NextDouble() 會產生 0.0 ~ 1.0 之間的數
             if (Random.Shared.NextDouble() < 0.51)
             {
@@ -34,15 +34,19 @@ namespace InputLogic
             {
                 x -= 1;
             }
-            else if  (start.X > end.X + 1)
+            else if (start.X > end.X + 1)
             {
                 x += 1;
             }
 
             // anti-recoil
-            if (start.Y < end.Y + 6)
+            if (start.Y < end.Y + 3)
             {
                 y += ranNum();
+            }
+            else if(start.Y > end.Y - 3)
+            {
+                y -= ranNum();
             }
 
             return new Point((int)x, (int)y);
