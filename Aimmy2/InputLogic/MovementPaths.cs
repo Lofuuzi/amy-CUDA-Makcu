@@ -40,7 +40,7 @@ namespace InputLogic
             }
 
             // anti-recoil
-            if (start.Y < end.Y + 3)
+            if (start.Y < end.Y + 6)
             {
                 y += ranNum();
             }
