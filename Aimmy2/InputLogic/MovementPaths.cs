@@ -46,7 +46,7 @@ namespace InputLogic
             }
             else if(start.Y > end.Y - 3)
             {
-                y -= ranNum();
+                y -= (ranNum() + 1);
             }
 
             return new Point((int)x, (int)y);
