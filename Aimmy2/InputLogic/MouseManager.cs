@@ -285,7 +285,7 @@ namespace InputLogic
             if (IsEMASmoothingEnabled)
             {
                 newPosition.X = (int)EmaSmoothing(previousX, newPosition.X, smoothingFactor);
-                newPosition.Y = (int)EmaSmoothing(previousY, newPosition.Y, smoothingFactor);
+                //newPosition.Y = (int)EmaSmoothing(previousY, newPosition.Y, smoothingFactor);
             }
 
             newPosition.X = Math.Clamp(newPosition.X, -200, 200);
