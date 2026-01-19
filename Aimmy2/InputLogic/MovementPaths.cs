@@ -44,7 +44,7 @@ namespace InputLogic
             {
                 y += ranNum();
             }
-            else if(start.Y > end.Y - 3)
+            else if(start.Y > end.Y - 2)
             {
                 y -= ranNum();
             }
