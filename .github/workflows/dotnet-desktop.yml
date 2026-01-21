@@ -47,23 +47,11 @@ jobs:
     - name: Build release x64
       run: msbuild $env:Solution_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:BuildMode /p:AppxBundle=$env:AppxBundle /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
       env:
-        Solution_Path: ${{ env.Solution_Name }}  # 確保變量名正確
         AppxBundle: Never
         BuildMode: SideLoadOnly
         Configuration: Release
         TargetPlatform: ${{ matrix.targetplatform }}
-        
-    - name: Remove Unused CUDA DLL for TensorRT Optimization
-      shell: pwsh
-      run: |
-        $dllPath = "Aimmy2\bin\x64\Release\net8.0-windows\onnxruntime_providers_cuda.dll"
-        if (Test-Path $dllPath) {
-          Remove-Item $dllPath -Force
-          Write-Host "Successfully removed onnxruntime_providers_cuda.dll"
-        } else {
-          Write-Host "CUDA DLL not found, skipping."
-        }
-        
+
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
