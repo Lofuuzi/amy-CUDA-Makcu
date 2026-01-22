@@ -8,9 +8,9 @@ namespace InputLogic
 
          static int ranNum()
         {
-             int baseSense = 1;
+             int baseSense = 2;
             // 1. 判定是否觸發 % 機率，NextDouble() 會產生 0.0 ~ 1.0 之間的數
-            if (Random.Shared.NextDouble() < 0.51)
+            if (Random.Shared.NextDouble() < 0.66)
             {
                 return baseSense; // % 機率直接回傳baseSense
             }
@@ -30,13 +30,13 @@ namespace InputLogic
             double y = uu * u * start.Y + 3 * uu * t * control1.Y + 3 * u * tt * control2.Y + tt * t * end.Y;
 
             // anti-shake
-            if (start.X < end.X - 1)
+            if (start.X < end.X)
             {
-                x -= 2;
+                x -= 1;
             }
-            else if (start.X > end.X + 1)
+            else if (start.X > end.X)
             {
-                x += 2;
+                x += 1;
             }
 
             // anti-recoil
