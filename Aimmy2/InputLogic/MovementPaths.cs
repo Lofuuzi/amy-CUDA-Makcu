@@ -40,11 +40,11 @@ namespace InputLogic
             }
 
             // anti-recoil
-            if (start.Y < end.Y + 4)
+            if (start.Y < end.Y + 3)
             {
                 y += ranNum();
             }
-            else if(start.Y > end.Y - 2)
+            else if(start.Y > end.Y - 3)
             {
                 y -= ranNum();
             }
