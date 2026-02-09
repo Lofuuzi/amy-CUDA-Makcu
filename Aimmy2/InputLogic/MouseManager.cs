@@ -293,8 +293,8 @@ namespace InputLogic
 
             newPosition.Y = (int)(newPosition.Y / aspectRatioCorrection);
 
-            newPosition.X += jitterX;
-            newPosition.Y += jitterY;
+            // newPosition.X += jitterX;
+            // newPosition.Y += jitterY;
 
             switch (Dictionary.dropdownState["Mouse Movement Method"])
             {
