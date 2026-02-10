@@ -6,9 +6,9 @@ namespace InputLogic
     {
         private static readonly int[] permutation = new int[512];
 
-         /*static int ranNum()
+         static int ranNum()
         {
-             int baseSense = 1;
+             int baseSense = 2;
             // 1. 判定是否觸發 % 機率，NextDouble() 會產生 0.0 ~ 1.0 之間的數
             if (Random.Shared.NextDouble() < 0.66)
             {
@@ -18,7 +18,7 @@ namespace InputLogic
             int offset = Random.Shared.Next(0, 2) == 0 ? -1 : 1;
             
             return baseSense + offset;
-        }*/
+        }
 
         internal static Point CubicBezier(Point start, Point end, Point control1, Point control2, double t)
         {
@@ -29,7 +29,7 @@ namespace InputLogic
             double x = uu * u * start.X + 3 * uu * t * control1.X + 3 * u * tt * control2.X + tt * t * end.X;
             double y = uu * u * start.Y + 3 * uu * t * control1.Y + 3 * u * tt * control2.Y + tt * t * end.Y;
 
-            /*if (start.X < end.X)
+            if (start.X < end.X)
             {
                 x -= 1;
             }
@@ -38,7 +38,7 @@ namespace InputLogic
                 x += 1;
             }
 
-            if (start.Y < end.Y + 1)
+            if (start.Y < end.Y + 2)
             {
                 y += ranNum();
             }
@@ -46,7 +46,7 @@ namespace InputLogic
             {
                 y -= ranNum();
             }
-*/
+
             return new Point((int)x, (int)y);
         }
 
