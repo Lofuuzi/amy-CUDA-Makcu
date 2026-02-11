@@ -153,7 +153,6 @@ namespace InputLogic
         private void GlobalHookKeyUp(object sender, KeyEventArgs e)
         {
             string keyCodeStr = e.KeyCode.ToString();
-            
             foreach (var bindingEntry in bindings)
             {
                 if (bindingEntry.Value == keyCodeStr)
