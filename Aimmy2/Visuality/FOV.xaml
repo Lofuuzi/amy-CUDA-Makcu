@@ -22,6 +22,7 @@
           VerticalAlignment="Top">
 
             <Ellipse x:Name="Circle"
+             Visibility="Collapsed"
              HorizontalAlignment="Center"
              VerticalAlignment="Center"
              Width="640"
@@ -29,7 +30,6 @@
              Stroke="Red" />
 
             <Rectangle x:Name="RectangleShape"
-               Visibility="Collapsed"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
                Width="640"
