@@ -191,7 +191,6 @@ namespace Aimmy2.Controls
                         MakcuMain.DisposeInstance();
                         _mainWindow.bindingManager.RestoreMouseEvents();
                     };
-
                 })
                 .AddDropdown("Screen Capture Method", d =>
                 {
