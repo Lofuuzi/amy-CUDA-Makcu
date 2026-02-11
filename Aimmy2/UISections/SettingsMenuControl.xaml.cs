@@ -183,7 +183,13 @@ namespace Aimmy2.Controls
                     uiManager.DDI_MAKCU.Selected += async (s, e) =>
                     {
                         if (!await MakcuMain.Load())
-                            await ResetToMouseEvent();
+                            _mainWindow.bindingManager.SetupMakcuEvents();
+                    };
+        
+                    uiManager.DDI_MAKCU.Unselected += (s, e) =>
+                    {
+                        MakcuMain.DisposeInstance();
+                        _mainWindow.bindingManager.RestoreMouseEvents();
                     };
 
                 })
