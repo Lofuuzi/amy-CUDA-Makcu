@@ -203,8 +203,8 @@ namespace Aimmy2.Controls
                 {
                     uiManager.D_ScreenCaptureMethod = d;
                     //d.DropdownBox.SelectedIndex = -1; 
-                    uiManager.DDI_CUDA = _mainWindow.AddDropdownItem(d, "CUDA");
                     uiManager.DDI_TensorRT = _mainWindow.AddDropdownItem(d, "TensorRT");
+                    uiManager.DDI_CUDA = _mainWindow.AddDropdownItem(d, "CUDA");
                     uiManager.DDI_CPU = _mainWindow.AddDropdownItem(d, "CPU");
 
                     uiManager.DDI_CUDA.Selected += OnExecutionProviderSelected;
