@@ -425,8 +425,8 @@ namespace Aimmy2.Controls
                 {
                     uiManager.D_FOVSTYLE = d;
 
-                    var circleItem = _mainWindow.AddDropdownItem(d, "Circle");
                     var rectangleItem = _mainWindow.AddDropdownItem(d, "Rectangle");
+                    var circleItem = _mainWindow.AddDropdownItem(d, "Circle");
 
                     circleItem.Selected += (s, e) =>
                     {
