@@ -913,8 +913,8 @@ namespace Aimmy2
                 }),
                 (uiManager.D_AimingBoundariesAlignment, "Aiming Boundaries Alignment", new Dictionary<string, int>
                 {
-                    ["Center"] = 0,
-                    ["Top"] = 1,
+                    ["Top"] = 0,
+                    ["Center"] = 1,
                     ["Bottom"] = 2
                 }),
                 // SettingsMenu dropdowns
@@ -934,8 +934,8 @@ namespace Aimmy2
                 }),
                 (uiManager.D_ExecutionProvider, "Execution Provider", new Dictionary<string, int>
                 {
-                    ["CUDA"] = 0,
-                    ["TensorRT"] = 1,
+                    ["TensorRT"] = 0,
+                    ["CUDA"] = 1,
                     ["CPU"] = 2
                 }),
                 (uiManager.D_ImageSize, "Image Size", new Dictionary<string, int>
@@ -1048,8 +1048,8 @@ namespace Aimmy2
 
                 ("Aiming Boundaries Alignment", uiManager.D_AimingBoundariesAlignment, new Dictionary<string, int>
                 {
-                    ["Center"] = 0,
-                    ["Top"] = 1,
+                    ["Top"] = 0,
+                    ["Center"] = 1,
                     ["Bottom"] = 2
                 }),
 
