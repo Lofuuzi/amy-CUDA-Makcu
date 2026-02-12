@@ -404,7 +404,7 @@ namespace Aimmy2.AILogic
                     }
 
                     _ioBindingInitialized = true;
-                    Log(LogLevel.Info, "IO Binding initialized successfully");
+                    // Log(LogLevel.Info, "IO Binding initialized successfully");
                 }
                 catch (Exception ex)
                 {
