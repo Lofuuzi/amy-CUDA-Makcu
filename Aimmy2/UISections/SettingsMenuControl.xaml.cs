@@ -150,12 +150,12 @@ namespace Aimmy2.Controls
                     d.DropdownBox.SelectedIndex = -1;  // Prevent auto-selection
 
                     // Add options
+                    uiManager.DDI_MAKCU = _mainWindow.AddDropdownItem(d, "Makcu Support");
                     _mainWindow.AddDropdownItem(d, "Mouse Event");
                     _mainWindow.AddDropdownItem(d, "SendInput");
                     uiManager.DDI_LGHUB = _mainWindow.AddDropdownItem(d, "LG HUB");
                     uiManager.DDI_RazerSynapse = _mainWindow.AddDropdownItem(d, "Razer Synapse (Require Razer Peripheral)");
                     uiManager.DDI_ddxoft = _mainWindow.AddDropdownItem(d, "ddxoft Virtual Input Driver");
-                    uiManager.DDI_MAKCU = _mainWindow.AddDropdownItem(d, "Makcu Support");
                     
 
                     // Setup handlers
@@ -207,8 +207,8 @@ namespace Aimmy2.Controls
                     uiManager.DDI_CUDA = _mainWindow.AddDropdownItem(d, "CUDA");
                     uiManager.DDI_CPU = _mainWindow.AddDropdownItem(d, "CPU");
 
-                    uiManager.DDI_CUDA.Selected += OnExecutionProviderSelected;
                     uiManager.DDI_TensorRT.Selected += OnExecutionProviderSelected;
+                    uiManager.DDI_CUDA.Selected += OnExecutionProviderSelected;
                     uiManager.DDI_CPU.Selected += OnExecutionProviderSelected;
                 })
                 .AddDropdown("Image Size", d =>
