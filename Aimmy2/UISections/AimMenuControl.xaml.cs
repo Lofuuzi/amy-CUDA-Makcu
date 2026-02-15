@@ -252,8 +252,8 @@ namespace Aimmy2.Controls
                 {
                     d.DropdownBox.SelectedIndex = -1;
                     uiManager.D_AimingBoundariesAlignment = d;
-                    _mainWindow.AddDropdownItem(d, "Center");
                     _mainWindow.AddDropdownItem(d, "Top");
+                    _mainWindow.AddDropdownItem(d, "Center");
                     _mainWindow.AddDropdownItem(d, "Bottom");
                 })
                 .AddDropdown("Target Class", d =>
