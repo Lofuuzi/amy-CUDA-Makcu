@@ -64,7 +64,7 @@ namespace Other
             object? value = Registry.GetValue(keyPath, valueName, null);
             if (value != null && Convert.ToInt32(value) == 1)
             {
-                LogManager.Log(LogManager.LogLevel.Warning, "Memory Integrity is enabled, please disable it to use Logitech Driver.", true, 7000);
+                LogManager.Log(LogManager.LogLevel.Warning, "Memory Integrity is enabled, please disable it to use Logitech Driver.", true, 2000);
                 return false;
             }
             else return true;
