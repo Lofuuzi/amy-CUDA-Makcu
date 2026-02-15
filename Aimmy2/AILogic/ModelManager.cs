@@ -65,7 +65,7 @@ namespace Aimmy2.AILogic
                         });
 
                             Log(LogLevel.Info, $"{modelPath} {Path.ChangeExtension(modelPath, ".engine")}");
-                            Log(LogLevel.Info, "Loading model with TensorRT, expect long model load time.", true, 15000);
+                            Log(LogLevel.Info, "Loading model with TensorRT, expect long model load time.", true, 3000);
 
                             sessionOptions.AppendExecutionProvider_Tensorrt(tensorrtOptions);
                             break;
@@ -253,7 +253,7 @@ namespace Aimmy2.AILogic
                     {
                         Log(LogLevel.Error,
                             $"Model requires unsupported size {fixedInputSize}x{fixedInputSize}. Supported sizes are: {string.Join(", ", supportedSizes)}",
-                            true, 10000);
+                            true, 3000);
                         return false;
                     }
 
@@ -265,7 +265,7 @@ namespace Aimmy2.AILogic
                     {
                         Log(LogLevel.Error,
                             $"Output shape does not match the expected shape of {string.Join("x", expectedShape)}.\nThis model will not work with Aimmy, please use an YOLOv8 model converted to ONNXv8.",
-                            true, 10000);
+                            true, 3000);
                         return false;
                     }
 
