@@ -285,45 +285,32 @@ namespace MouseMovementLibraries.MakcuSupport
                     {
                         var stopwatch = Stopwatch.StartNew();
                         StringBuilder sb = new StringBuilder();
-                        string commandTrimmed = command.Trim();
-                        bool firstLineIsEcho = true;
 
                         while (stopwatch.ElapsedMilliseconds < responseTimeoutMs)
                         {
-                            try
+                            if (_serialPort.BytesToRead > 0)
                             {
-                                string line = _serialPort.ReadLine().Trim();
-                                if (!string.IsNullOrEmpty(line))
-                                {
-                                    Log($"Received (raw): {line}");
-                                    if (line.Equals(commandTrimmed, StringComparison.OrdinalIgnoreCase) && firstLineIsEcho)
-                                    {
-                                        firstLineIsEcho = false;
-                                        continue;
-                                    }
-                                    if (line.Equals("OK", StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        if (sb.Length > 0) continue;
-                                    }
-                                    if (sb.Length > 0) sb.Append("\n");
-                                    sb.Append(line);
-                                }
-                                if (_serialPort.BytesToRead == 0 && sb.Length > 0)
-                                {
-                                    Thread.Sleep(15);
-                                    if (_serialPort.BytesToRead == 0) break;
-                                }
+                                sb.Append(_serialPort.ReadExisting());
+                                if (sb.ToString().Contains(">>>")) break; // 檢測到 V4 提示字元即刻完成，杜絕超時延遲
                             }
-                            catch (TimeoutException)
+                            else
                             {
-                                Log($"ReadLine() timeout in SendCommandInternal for '{command}'.");
-                                break;
+                                Thread.Sleep(2);
                             }
-                            catch (InvalidOperationException ioe) { Log($"InvalidOperationException in ReadLine (SendCommandInternal): {ioe.Message}"); _isInitializedAndConnected = false; Close(); return false; }
-                            catch (Exception ex) { Log($"Exception in ReadLine (SendCommandInternal): {ex.Message}"); break; }
                         }
                         stopwatch.Stop();
-                        responseText = sb.ToString().Trim();
+
+                        string raw = sb.ToString();
+                        string[] lines = raw.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                        var validLines = lines
+                            .Select(l => l.Trim())
+                            .Where(l => !l.Equals(command.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                                        !l.Equals("OK", StringComparison.OrdinalIgnoreCase) &&
+                                        !l.StartsWith(">>>"));
+
+                        responseText = string.Join("\n", validLines).Trim();
+                        if (responseText.StartsWith("km.")) responseText = responseText.Substring(3).Trim();
+
                         Log($"Final response for '{command}': '{responseText}' (Time: {stopwatch.ElapsedMilliseconds}ms)");
                         return true;
                     }
@@ -358,14 +345,16 @@ namespace MouseMovementLibraries.MakcuSupport
 
         private void ListenForButtonEvents(bool debug)
         {
-            Log("Listener thread started. (PACKET PARSING MODE)");
-            byte lastMask = 0x00; // <<-- CAMBIO CLAVE: Inicializar como todos los botones liberados
-            var buttonMap = new Dictionary<int, MakcuMouseButton> {
-        {0, MakcuMouseButton.Left}, {1, MakcuMouseButton.Right}, {2, MakcuMouseButton.Middle},
-        {3, MakcuMouseButton.Mouse4}, {4, MakcuMouseButton.Mouse5}
-    };
+            Log("Listener thread started. (V4 STREAMING MODE)");
+            byte lastMask = 0x00;
+            var buttonMap = new Dictionary<int, MakcuMouseButton>
+            {
+                {0, MakcuMouseButton.Left}, {1, MakcuMouseButton.Right}, {2, MakcuMouseButton.Middle},
+                {3, MakcuMouseButton.Mouse4}, {4, MakcuMouseButton.Mouse5}
+            };
 
-            byte[] packetHeader = { 0x6B, 0x6D, 0x2E };
+            // V4 正確文字串流標頭為 "km.buttons"
+            byte[] packetHeader = Encoding.ASCII.GetBytes("km.buttons");
             int currentHeaderIndex = 0;
 
             while (!_stopListenerEvent.IsSet)
@@ -388,82 +377,45 @@ namespace MouseMovementLibraries.MakcuSupport
                             currentHeaderIndex++;
                             if (currentHeaderIndex == packetHeader.Length)
                             {
-                                if (debug) Log($"Listener: Packet header {string.Join(",", packetHeader.Select(b => b.ToString("X2")))} detected!");
+                                currentHeaderIndex = 0;
+
+                                // 等待緊隨其後的 1-byte 按鍵遮罩數值
+                                int waitRetries = 0;
+                                while (_serialPort.BytesToRead == 0 && waitRetries++ < 10) Thread.Sleep(1);
 
                                 if (_serialPort.BytesToRead > 0)
                                 {
                                     byte currentMask = (byte)_serialPort.ReadByte();
-                                    if (debug) Log($"Listener: Potential button mask byte: 0x{currentMask:X2}");
-
-                                    if (currentMask <= 0b00011111)
+                                    if (currentMask != lastMask)
                                     {
-                                        if (currentMask != lastMask)
+                                        byte changedBits = (byte)(currentMask ^ lastMask);
+                                        lock (_buttonStates)
                                         {
-                                            if (debug) Log($"Listener: Processing button mask. New: 0x{currentMask:X2}, Prev: 0x{lastMask:X2}");
-                                            byte changedBits = (byte)(currentMask ^ lastMask);
-
-                                            lock (_buttonStates)
+                                            foreach (var pair in buttonMap)
                                             {
-                                                foreach (var pair in buttonMap)
+                                                if ((changedBits & (1 << pair.Key)) != 0)
                                                 {
-                                                    if ((changedBits & (1 << pair.Key)) != 0)
+                                                    bool isPressed = (currentMask & (1 << pair.Key)) != 0;
+                                                    _buttonStates[pair.Value] = isPressed;
+                                                    try
                                                     {
-                                                        bool isPressed = (currentMask & (1 << pair.Key)) != 0;
-                                                        _buttonStates[pair.Value] = isPressed;
-                                                        if (debug) Log($"Listener: ---> EVENT: Button: {pair.Value}, IsPressed: {isPressed}");
-                                                        try
-                                                        {
-                                                            ButtonStateChanged?.Invoke(pair.Value, isPressed);
-                                                        }
-                                                        catch (Exception ex)
-                                                        {
-                                                            Log($"Exception in ButtonStateChanged handler: {ex.Message}");
-                                                        }
+                                                        ButtonStateChanged?.Invoke(pair.Value, isPressed);
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        Log($"Exception in ButtonStateChanged handler: {ex.Message}");
                                                     }
                                                 }
                                             }
-                                            lastMask = currentMask;
-                                            if (debug)
-                                            {
-                                                var pressedButtons = _buttonStates.Where(kvp => kvp.Value).Select(kvp => kvp.Key.ToString()).ToArray();
-                                                Log($"Listener: Button states updated. Mask: 0x{currentMask:X2} -> {(pressedButtons.Any() ? string.Join(", ", pressedButtons) : "None")}");
-                                            }
                                         }
-                                    }
-
-                                    int expectedTailBytes = 2;
-                                    for (int i = 0; i < expectedTailBytes; i++)
-                                    {
-                                        if (_serialPort.BytesToRead > 0)
-                                        {
-                                            byte consumedByte = (byte)_serialPort.ReadByte();
-                                            if (debug) Log($"Listener: Consumed tail byte {i + 1}: 0x{consumedByte:X2}");
-                                        }
-                                        else
-                                        {
-                                            if (debug) Log($"Listener: Expected tail byte {i + 1} but no data. Packet might be short.");
-                                            break;
-                                        }
+                                        lastMask = currentMask;
                                     }
                                 }
-                                else
-                                {
-                                    if (debug) Log("Listener: Header found, but no data for button mask byte. Packet might be short.");
-                                }
-                                currentHeaderIndex = 0;
                             }
                         }
                         else
                         {
-                            if (currentHeaderIndex > 0 && debug)
-                            {
-                                Log($"Listener: Byte 0x{byteRead:X2} broke header sequence at index {currentHeaderIndex}. Resetting search.");
-                            }
-                            currentHeaderIndex = 0;
-                            if (byteRead == packetHeader[0])
-                            {
-                                currentHeaderIndex = 1;
-                            }
+                            currentHeaderIndex = (byteRead == packetHeader[0]) ? 1 : 0;
                         }
                     }
                     else
@@ -496,36 +448,49 @@ namespace MouseMovementLibraries.MakcuSupport
         public bool Press(MakcuMouseButton button) => SendCommandInternal($"km.{GetButtonString(button)}(1)", false, out _);
         public bool Release(MakcuMouseButton button) => SendCommandInternal($"km.{GetButtonString(button)}(0)", false, out _);
         public bool Move(int x, int y) => SendCommandInternal($"km.move({x},{y})", false, out _);
-        public bool MoveSmooth(int x, int y, int segments) => SendCommandInternal($"km.move({x},{y},{segments})", false, out _);
-        public bool MoveBezier(int x, int y, int segments, int ctrlX, int ctrlY) => SendCommandInternal($"km.move({x},{y},{segments},{ctrlX},{ctrlY})", false, out _);
+
+        public bool MoveSmooth(int x, int y, int segments = 5)
+        {
+            if (segments <= 1) return Move(x, y);
+            int remX = x, remY = y;
+            bool success = true;
+            for (int i = segments; i >= 1; i--)
+            {
+                int stepX = remX / i;
+                int stepY = remY / i;
+                remX -= stepX;
+                remY -= stepY;
+                if (!Move(stepX, stepY)) success = false;
+                Thread.Sleep(2);
+            }
+            return success;
+        }
+
         public bool Scroll(int delta) => SendCommandInternal($"km.wheel({delta})", false, out _);
 
         public string GetKmVersion()
         {
             return SendCommandInternal("km.version()", true, out string response, 500) ? response : null;
         }
-        private string GetButtonString(MakcuMouseButton button)
+        private string GetButtonString(MakcuMouseButton button) => button switch
         {
-            switch (button)
-            {
-                case MakcuMouseButton.Left: return "left";
-                case MakcuMouseButton.Right: return "right";
-                case MakcuMouseButton.Middle: return "middle";
-                default: throw new ArgumentException($"Button {button} not supported for direct press/release actions (left/right/middle).");
-            }
-        }
-        private string GetButtonLockString(MakcuMouseButton button)
-        {
-            switch (button)
-            {
-                case MakcuMouseButton.Left: return "ml";
-                case MakcuMouseButton.Right: return "mr";
-                case MakcuMouseButton.Middle: return "mm";
-                case MakcuMouseButton.Mouse4: return "ms1";
-                case MakcuMouseButton.Mouse5: return "ms2";
-                default: throw new ArgumentException($"Button not supported for lock/catch: {button}");
-            }
-        }
+            MakcuMouseButton.Left => "left",
+            MakcuMouseButton.Right => "right",
+            MakcuMouseButton.Middle => "middle",
+            MakcuMouseButton.Mouse4 => "side1",
+            MakcuMouseButton.Mouse5 => "side2",
+            _ => throw new ArgumentOutOfRangeException(nameof(button), button, null)
+        };
+
+        public bool SetButtonMask(MakcuMouseButton button, bool mask) =>
+            SendCommandInternal($"km.{GetButtonString(button)}_mask({(mask ? 1 : 0)})", false, out _);
+
+        public bool SetMoveMask(bool mask) =>
+            SendCommandInternal($"km.move_mask({(mask ? 1 : 0)})", false, out _);
+
+        public bool SetWheelMask(bool mask) =>
+            SendCommandInternal($"km.wheel_mask({(mask ? 1 : 0)})", false, out _);
+
         public Dictionary<MakcuMouseButton, bool> GetCurrentButtonStates()
         { lock (_buttonStates) { return new Dictionary<MakcuMouseButton, bool>(_buttonStates); } }
 
